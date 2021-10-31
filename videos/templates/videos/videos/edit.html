@@ -1,0 +1,45 @@
+{% extends "blog/base.html" %}
+{% load bootstrap5 %}
+
+{% block content %}
+<title>Edit Video</title>
+
+<div class="container-fluid">
+	{% if messages %}
+		{% for message in messages %}
+			<div class="alert alert-primary {{ message.tag }}"
+				 rol="alert">
+				{{ message }}
+			</div>
+		{% endfor %}
+	{% endif %}
+	<div class="row">
+
+		<div class="col-sm">
+			<div class="g-0 border rounded 
+						overflow-hidden flex-md-row mb-4 
+						shadow-sm h-md-250 position-relative 
+						bg-dark text-white p-3">
+            <h1>Edit Video</h1>
+            </div>
+            <div class="py-3">
+            	<div class="border p-4">
+					<form action="." 
+			      		  method="post"
+			              enctype="multipart/form-data">
+			      		{% bootstrap_form form %}
+			      		{% csrf_token %}
+			      		<button type="submit"
+			      		  		class="btn btn-primary">
+			      	  	  		Save
+			      		</button>
+		    		</form>
+		    	</div>
+		    </div>
+		</div>
+		<div class="col-sm">
+		</div>
+	</div>
+</div>
+<br>
+{% endblock %}

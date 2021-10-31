@@ -1,0 +1,20 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+<title>Logged out</title>
+
+<div class="container">
+	<div class="border p-5">
+		<h2>To continue the actions 
+			on our site, please 
+			<a href="{% url 'login' %}">
+				log in
+			</a>
+		</h2>
+	</div>
+</div>
+<br>
+<div class="shadow-lg bg-white text-white pt-4 mb-6" 
+	 style="height: 500px">
+</div>
+{% endblock %}

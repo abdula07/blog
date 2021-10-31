@@ -1,0 +1,156 @@
+{% extends "blog/base.html" %}
+{% load thumbnail %}
+{% block content %}
+{% load bootstrap5 %}
+
+<title>Detail Video</title>
+
+<div class="container">
+	<div class="row">
+			<video class="bg-dark" 
+				   width="100px" 
+				   height="400" 
+				   controls="controls">
+				<source src="{{ videos.upload.url }}" 
+						type='video/mp4'>
+				</source>
+			</video>
+		<div class="col-sm">
+			<br>
+			<div class="row">
+				<div class="col-sm-6 col-4">
+					<p class="fw-bold"
+			   		   style="font-size: 20px">
+						{{ videos.title }}
+					</p>
+				</div>
+				<div class="col-sm-3 col-4">
+					{% with total_likes=videos.users_like.count users_like=videos.users_like.all %}
+						<a href="#"
+					   	   data-id="{{ videos.id }}"
+					       data-action="{% if request.user in users_like %}un
+					   					{% endif %}like"
+					   	   class="like btn btn-danger">
+							{% if request.user not in  users_like %}
+								Like
+							{% else %}
+								Unlike
+							{% endif %}
+						</a>
+						<span class="count">
+							<span class="total
+										 btn
+										 btn-success">
+										{{ total_likes }}
+							</span>
+						</span>
+					{% endwith %}
+				</div>
+				<div class="col-sm-3 col-4">
+					<a href="{% url 'videos:video_share' videos.id %}">
+						<button type="sumbit" 
+								class="btn btn-outline-danger">
+							<svg xmlns="http://www.w3.org/2000/svg"
+							 	 width="16"
+							 	 height="16"
+							 	 fill="currentColor"
+							 	 class="bi bi-share-fill"
+							 	 viewBox="0 0 16 16">
+  							<path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/>
+							</svg>
+							<span class="px-2">
+								Share
+							</span>
+						</button>
+					</a>
+				</div>
+			</div>
+			<div class="border"></div>
+			<p class="fw-bold">
+				{{ videos.author }}
+			</p>
+			<p>
+				{{ videos.body }}
+			</p>
+			<div class="border"></div>
+			<br>
+
+			<form action="" method="post">
+				{% bootstrap_form form %}
+				{% csrf_token %}
+				<button type="submit"
+						class="btn btn-primary">
+						Comment
+				</button>
+			</form>
+
+			{% for comment in comments %}
+				<div class="py-4">
+					<span class="fw-bold" 
+						  style="font-size: 13px">
+							{{ comment.name }}
+					</span>
+					<span class="text-muted display-inline" 
+						  style="font-size: 13px">
+							{{ comment.created }}
+					</span>
+					<p class="pt-1">
+						{{ comment.body }}
+					</p>
+				</div>
+			{% endfor %}
+			<br>
+		</div>
+		<div class="col-sm">
+			{% for videos in similar_videos %}
+			<a href="{{ videos.get_absolute_url }}">
+				<div class="row py-2">
+					<div class="col">
+						{% thumbnail videos.poster "300x200" crop="100%" as im %}
+							<img class="img-fluid"
+					 			src="{{ im.url }}">
+						{% endthumbnail %}
+					</div>
+					<div class="col">
+						<h5 class="fw-bold">{{ videos.title }}</h5>
+						<p class="text-muted">{{ videos.author }}</p>
+						<p class="text-muted">{{ videos.created }}</p>
+					</div>
+				</div>
+			</a>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+
+{% block domready %}
+	$('a.like').click(function(e){
+		e.preventDefault();
+		$.post(
+			'{% url "videos:like" %}',
+			{id: $(this).data('id'),
+			 action: $(this).data('action')
+			},
+			 function(data){
+			 	if (data['status'] == 'ok'){
+			 		var previous_action = $('a.like').data('action');
+
+			 		$('a.like').data('action', previous_action == 'like' ? 'unlike' : 'like');
+
+			 		$('a.like').text(previous_action == 'like' ? 'Unlike': 'Like');
+
+			 		var previous_likes = parseInt($('span.count .total').text());
+			 		$('span.count .total')
+			 		.text(
+			 			  previous_action == 'like' ? previous_likes + 1
+			 			  : previous_likes - 1);
+
+
+			 }
+			}
+		);	
+	});
+{% endblock %}

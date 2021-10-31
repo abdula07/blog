@@ -1,0 +1,33 @@
+{% extends "blog/base.html" %}
+{% load bootstrap5 %}
+
+{% block content %}
+<title>Register</title>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-8 col-xs-12">
+			<h1 class="fw-bold pb-3">Register Now</h1>
+			<p class="pb-3">
+				Registering for a free nature.com 
+				account will provide you with access
+				to breaking news services, 
+				alerts on the latest research and more.
+			</p>
+			<form action="" method="post">
+				{% bootstrap_form user_form %}
+					{% csrf_token %}
+				<button type="submit" 
+						class="btn btn-primary">
+						Register
+				</button>
+			</form>
+		</div>
+		<div class="col-md-4 col-xs-12">
+				
+		</div>
+	</div>
+</div>
+<br>
+
+{% endblock %}

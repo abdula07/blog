@@ -1,0 +1,183 @@
+{% extends 'blog/base.html' %}
+{% load blog_tags %}
+{% load bootstrap5 %}
+{% load thumbnail %}
+
+
+
+{% block content %}
+<title>Post detail</title>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-8 col-xs-12 p-4 
+					col-sm-12 d-flex flex-column 
+					position-static">
+			<div class="fw-bold">NEWS</div> 
+			<div class="text-muted">
+				| {{ post.publish }}
+			</div>
+			<h1 class="py-2 fw-bold">
+				{{ post.title }}
+			</h1>
+			<p>{{ post.body }}</p>
+			<div class="border-top py-2"></div>
+			<div class="row">
+    			<div class="col-sm-7 col-4">
+					{% with comments.count as comments_total %}
+						<p class="fw-bolder" 
+							style="font-size: 17px">
+							{{ comments_total }} 
+								comment 
+							{{ comments_total|pluralize }}
+						<p>
+					{% endwith %}
+				</div>
+				<div class="col-sm-2 col-4">
+					{% with total_likes=post.users_like.count users_like=post.users_like.all %}
+						<a href="#"
+					   	   data-id="{{ post.id }}"
+					       data-action="{% if request.user in users_like %}un
+					   					{% endif %}like"
+					   	   class="like btn btn-danger">
+							{% if request.user not in  users_like %}
+								Like
+							{% else %}
+								Unlike
+							{% endif %}
+						</a>
+						<span class="count">
+							<span class="total
+										 btn
+										 btn-success">
+										{{ total_likes }}
+							</span>
+						</span>
+					{% endwith %}
+				</div>
+				<div class="col-sm-3 col-4">
+					<a href="{% url 'blog:post_share' post.id %}">
+						<button type="sumbit" 
+								class="btn btn-outline-danger">
+							<svg xmlns="http://www.w3.org/2000/svg"
+								 width="16"
+								 height="16"
+								 fill="currentColor"
+								 class="bi bi-share-fill"
+								 viewBox="0 0 16 16">
+  							<path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/>
+							</svg>
+							<span class="px-2">
+								Share
+							</span>
+						</button>
+					</a>
+				</div>
+			</div>
+			<h2 class="py-3">
+				Leave a comment
+			</h2>
+			<form class="py-4" acton="" method="post">
+				{% bootstrap_form comment_form %}
+				{% csrf_token %}
+				<button type="sumbit" 
+						class="btn btn-primary">
+						Comment
+				</button>
+			</form>
+			{% for comment in comments %}
+				<div class="py-4">
+					<span class="fw-bold" 
+						  style="font-size: 13px">
+							{{ comment.name }}
+					</span>
+					<span class="text-muted display-inline" 
+						  style="font-size: 13px">
+							{{ comment.created }}
+					</span>
+					<p class="pt-1">
+						{{ comment.body }}
+					</p>
+				</div>
+			{% endfor %}
+		</div>
+		<div class="col-md-4 col-xs-12  
+					col-sm-12 p-4 d-flex 
+					flex-column position-static">
+			<span class="g-0 border rounded 
+						overflow-hidden 
+						flex-md-row mb-4 shadow-sm 
+						h-md-250 position-relative"><br>
+			</span>
+			<h1 class="fw-bold" 
+				style="font-size: 20px">
+				Related Articles</h1>
+			{% for post in similar_posts %}
+			<a href="{{ post.get_absolute_url }}" 
+				style="color: #000000; 
+					   text-decoration:none">
+			<div class="row border-bottom py-2">
+				<div class="col-md-9 
+							col-xs-8
+							col-sm-8">
+					<span class="fw-bold py-1">
+						{{ post.title }}
+					</span>
+				</div>
+				<div class="col-md-3 
+							col-xs-4  
+							col-sm-4">
+				<img class="py-1" 
+					 style="width: 110px; 
+					 		height: 100px" 
+					 src="{{ post.image.url }}">
+				</div>
+			</div>
+			</a>		
+			{% endfor %}
+			<h1 class="pt-4 fw-bold" 
+				style="font-size: 20px">
+				Subjects
+			</h1>
+			{% for tag in post.tags.all %}
+ 				<a class="badge bg-info text-white" 
+ 				   style="width: 80px" 
+ 				   href="{% url 'blog:post_list_by_tag' tag.slug %}">
+ 				   {{ tag.name }}
+ 				</a>
+ 			{% endfor %}
+ 			<div class="row border-bottom py-2">
+ 			</div>			
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block domready %}
+	$('a.like').click(function(e){
+		e.preventDefault();
+		$.post(
+			'{% url "blog:like" %}',
+			{id: $(this).data('id'),
+			 action: $(this).data('action')
+			},
+			 function(data){
+			 	if (data['status'] == 'ok'){
+			 		var previous_action = $('a.like').data('action');
+
+			 		$('a.like').data('action', previous_action == 'like' ? 'unlike' : 'like');
+
+			 		$('a.like').text(previous_action == 'like' ? 'Unlike': 'Like');
+
+			 		var previous_likes = parseInt($('span.count .total').text());
+			 		$('span.count .total')
+			 		.text(
+			 			  previous_action == 'like' ? previous_likes + 1
+			 			  : previous_likes - 1);
+
+
+			 }
+			}
+		);	
+	});
+{% endblock %}

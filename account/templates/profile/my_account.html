@@ -1,0 +1,54 @@
+{% extends "profile/my_base.html" %}
+
+{% block content %}
+<title>My account</title>
+
+<div class="container">	
+	<div class="row py-3">
+		<div class="col-md-11 col-sm-10">
+			<h1 class="">My account</h1>
+		</div>
+		<div class="col-md-1 col-sm-2">
+			<a href="{% url 'logout' %}">
+					<button type="submit test-italic" 
+							class="btn btn-outline-primary" 
+							style="font-size: 12px">
+							Log-out
+					</button>
+			</a>
+		</div>
+	</div>
+	<div class="border p-3">
+	<div class="row">
+		<div class="col-md-11 col-sm-10">
+			<h4 class="pb-3">Profile</h4>
+			<span class="fw-bold" 
+				  style="font-size: 13px">
+				  Personal Data
+			</span>
+			<p style="font-size: 13px">
+			   {{ request.user }}
+			</p>
+			<span class="fw-bold" 
+				  style="font-size: 13px">
+				  Password
+			</span>
+			<p style="font-size: 13px">
+			   *******
+			</p>
+				
+		</div>
+		<div class="col-md-1 col-sm-2">
+			<a href="{% url 'edit' %}">	
+				<button type="button" 
+						class="btn btn-primary">
+						Edit
+				</button>
+			</a>
+		</div>
+			
+	</div>
+	</div>
+</div>
+
+{% endblock %}

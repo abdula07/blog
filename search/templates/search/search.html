@@ -1,0 +1,53 @@
+{% extends "blog/base.html" %}
+{% load bootstrap5 %}
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<title>Search</title>
+
+<div class="container-fluid">
+	<div class="shadow-lg bg-dark text-white p-4 mb-6">
+		{% if query %}
+			<h1>Posts containing "{{ query }}"</h1>
+			<h3>
+				{% with results.count as total_results %}
+					Found {{ total_results }} 
+					result {{ total_results|pluralize }}
+				{% endwith %}
+			</h3>
+		{% for post in results %}
+			<h4>
+				<a href="{{ post.get_absolute_url }}">
+					{{ post.title }}
+				</a>
+			</h4>
+			{{ post.body|truncatewords:5  }}
+		{% empty %}
+			<p>
+				There are no results
+				for your query
+			</p>
+		{% endfor %}
+		<p><a href="{% url 'search:search_mysite' %}">
+			  Seacrch again
+			</a>
+		</p>
+		{% else %}
+			<h1>Search for posts</h1>
+			<form action="." method="get">
+				{% bootstrap_form form %}
+				<button type="submit"
+			 			class="btn btn-primary">
+			 			Search
+			 	</button>
+			</form>
+		{% endif %}
+	</div>
+</div>
+
+
+<br>
+<div class="shadow-lg bg-white text-white pt-4 mb-6" 
+	 style="height: 300px">
+</div>
+{% endblock %}

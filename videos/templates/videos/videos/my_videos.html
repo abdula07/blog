@@ -1,0 +1,45 @@
+{% extends "blog/base.html" %}
+{% load thumbnail %}
+
+{% block content %}
+    <div id="my-videos">
+        <div class="container-fluid">
+            <div class="g-0 border rounded 
+                 overflow-hidden flex-md-row mb-4 
+                 shadow-sm h-md-250 position-relative 
+                 bg-dark text-white p-3 text-center">
+                 <h1>My video</h1>
+            </div>
+        </div>
+        {% include "videos/videos/my_videos_ajax.html" %}
+    </div>
+{% endblock  %}
+
+{% block domready %}
+    var page = 1;
+    var empty_page = false;
+    var block_request = false;
+
+    $(window).scroll(function () {
+        var margin = $(document).height()
+                     - $(window).height()
+                     - 200;
+        if ($(window).scrollTop() > margin
+            && empty_page == false
+            && block_request == false) {
+
+            block_request = true;
+            page += 1;
+
+            $.get('?page=' + page, function (data) {
+                if (data == '') {
+                    empty_page = true;
+                } else {
+                    block_request = false;
+                    $('#my-videos').append(data);
+                }
+            });
+        }
+    });
+
+{% endblock %}

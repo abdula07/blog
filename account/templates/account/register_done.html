@@ -1,0 +1,20 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+<title>Register Done</title>
+
+<div class="container-fluid">
+	<h1>Welkome {{ new_user.first_name }}</h1>
+	<p>Your account has been 
+	   successfully created. 
+	   Now you can 
+	   <a href="{% url 'login' %}">
+	   			log in
+	   	</a>
+	.<p>
+</div>
+<div class="shadow-lg bg-white 
+			text-white pt-4 mb-6" 
+	 style="height: 400px">
+</div>
+{% endblock %}

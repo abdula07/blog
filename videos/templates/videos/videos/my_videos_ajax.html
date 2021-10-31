@@ -1,0 +1,38 @@
+{% load thumbnail %}
+
+<title>My videos</title>
+
+<div class="container-fluid">
+  <div class="row 
+              row-cols-2
+              row-cols-sm-2 
+              row-cols-md-4 g-3">
+    {% for video in my_videos %}
+      <div class="col">
+        <a href="{{ video.get_absolute_url }}">
+          {% thumbnail video.poster "300x200" crop="100%" as im %}
+            
+            <image class="img-fluid rounded 
+                          mx-auto d-block" 
+                   src="{{ im.url }}"></image>
+          {% endthumbnail %}
+        </a>
+        <div class="card-body">
+          <div class="text-center">
+       		<span class="fw-bold">
+       			{{ video.title }} | <a href="{% url 'videos:edit' video.id %}">edit</a>
+       		</span>
+       		<div class="text-muted"
+       		 	  style="font-size: 12px">
+       		 	  <span class="fw-bold"
+       		 	  	style="font-size: 14px">
+       		 	  	{{ video.author }} |
+       		 	  </span>
+       		 	  {{ video.created }}
+       		 </div>
+          </div> 
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
